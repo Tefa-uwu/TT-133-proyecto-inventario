@@ -33,6 +33,11 @@ Ahora vamos a hacer un hola mundo en node.js, para eso vamos a poner el siguient
 const express = require ("express");
 //traemos express a index.js 
 
+const mongoose = require ("mongoose")
+require("dotenv").config()
+//con esta linea puedo traer las variables de entorno, dotenv gestionar nuestra base de datos
+//permitimos que a traves de dotenv, index ingrese a los paquetes
+
 const holaRoutes =require("./routes/holaRoutes")
 
 const app = express()
@@ -44,6 +49,16 @@ app.set("port", PORT)
 //El puerto que vamos a escuchar va a ser el 3006
 
 app.use("/api/hola",holaRoutes)
+
+
+mongoose.connect(process.env.MONGO_URI)
+//.then una promesa,function async
+.then(console.log("Conect to BD"))
+//Si sale error muestrame el error
+.catch(err=> console.error(err))
+//forma en la que traemos archivos
+
+app.use("/api/inventario", inventarioRoutes)
 
 //app.get este tipo de codigo es anidado
 app.get("/", (req, res)=> {
@@ -63,6 +78,15 @@ Vamos a explicar cada una de las lineas
 
 - const express = require ("express");
 Creamos una constante llamada express (Que es un paquete, una libreria) y al mismo tiempo traemos la herramienta que vamos a usar.
+
+- const mongoose = require ("mongoose")
+Creamos una constante llamada mongoose (Que es un paquete, una libreria) y al mismo tiempo traemos la herramienta que vamos a usar.
+
+- require("dotenv").config()
+Imagina que tienes una caja secreta con cosas importantes dentro, como tus juguetes favoritos o tus dulces. Pero no quieres que todo el mundo vea lo que hay dentro de esa caja, ¿verdad?
+Entonces, para que solo tú o tu computadora pueda abrir la caja, usas una llave especial. La caja secreta en este caso es como un archivo en tu computadora, y la llave especial son las "variables de entorno", que guardan cosas importantes como contraseñas o claves.
+Cuando escribimos require("dotenv").config(), le estamos diciendo a la computadora que abra esa caja secreta usando la llave, para que pueda leer las cosas importantes dentro, sin que nadie más las vea.
+En resumen, ese código le dice a tu programa que use la llave para abrir la caja secreta y usar las cosas guardadas dentro de ella. ¡Así tu programa puede hacer su trabajo sin que nada se pierda o se vea por otros!
 
 - const holaRoutes =require("./routes/holaRoutes")
 Ahora creamos una variable llamada holaRoutes, luego accedemos a la sgte ubicacion en esta misma carpeta, luego el archivo routes en la posicion holaRoutes
@@ -84,6 +108,19 @@ holaRoutes es como un paquete de instrucciones que tienes guardado en otro lugar
 Así que app.use("/api/hola", holaRoutes) es solo una forma de decir:
 "¡Hey, cuando alguien vaya a la ruta /api/hola, quiero que les muestres lo que está en holaRoutes!"
 Es como si estuvieras organizando varias puertas en tu casa, y cada puerta tiene un paquete de instrucciones que debe seguir quien toque esa puerta.
+
+- mongoose.connect(process.env.MONGO_URI)
+Imagina que tienes una gran biblioteca llena de libros (esa es la base de datos, como MongoDB). Ahora, quieres entrar a esa biblioteca para leer algunos libros, pero para hacerlo necesitas una llave especial.
+process.env.MONGO_URI es esa llave especial que te da acceso a la biblioteca, para que puedas abrir la puerta.
+mongoose.connect es como decirle a tu computadora "¡Usa esa llave especial para entrar en la biblioteca y leer los libros que necesito!".
+Entonces, cuando escribimos mongoose.connect(process.env.MONGO_URI), le estamos diciendo a la computadora: "Por favor, usa la llave especial que está guardada en process.env.MONGO_URI para entrar a la biblioteca (que es la base de datos) y empezar a trabajar con los libros (que son los datos)".
+Es como si le dijieras a tu computadora: "¡Abre la biblioteca y toma los libros que necesito usando esta llave especial!
+
+- .then(console.log("Conect to BD"))
+Si pasa lo del codigo anterior imprimame Conect to BD
+
+- .catch(err=> console.error(err))
+Si eso no pasa y sale error, muestrame el error
 
 - app.get("/",
 Verbo de http (Post- Crear, Get - Leer o recuperar , Put - Actualizar, Delete - Eliminar)+ ruta y definimos que funcion se va a ejecutar
@@ -159,3 +196,89 @@ Esa función puede hacer muchas cosas, pero normalmente lo que hace es devolver 
 Un módulo es un archivo o conjunto de archivos que contiene funciones, objetos o variables que puedes compartir con otras partes de tu aplicación. Para hacer esto, usamos module.exports para "exportar" algo desde un módulo, de modo que pueda ser utilizado en otro lugar.
 module.exports es un objeto especial en Node.js que define lo que va a estar disponible cuando otro archivo importe ese módulo. Es como si estuvieras entregando algo a otras partes de tu código.
 router es el objeto que estás exportando. En el contexto de Express, el router es un objeto que contiene rutas (los caminos que tu aplicación web maneja). Estas rutas indican qué hacer cuando un usuario accede a diferentes URLs de tu aplicación.
+
+## Ahora en inventario Routes
+Ponemos el siguiente codigo
+
+```
+const express = require("express")
+const {leerInventario} =require("../controllers/inventario")
+const router = express.Router()
+
+// router.get("/", (req,res)=>{
+//     console.log("hola desde routes inventario")
+//     res.send("hola desde routes inventario")
+// })
+
+router.get("/", leerInventario)
+
+module.exports = router
+
+```
+Ahora explicamos cada linea
+
+- const express = require("express")
+Creamos una variable llamda express que nos va a traer express
+
+- const {leerInventario} =require("../controllers/inventario")
+Creamos una variable llamada leerInventario, que va a salir del archivo inventario.js en routes para dirigirse a la carpeta controllers en el archivo inventario
+
+- const router = express.Router()
+Creamos una constante llamada router donde luego vamos a saber como guiar la info hacia ese lugar
+
+- router.get("/", leerInventario)
+Ahora, Imagina que tienes una puerta (que sería la ruta "/") y cada vez que alguien toca esa puerta, tú le dices algo. En este caso, el código router.get("/", leerInventario) es como decir:
+router.get: Esto es como decir "cuando alguien toque la puerta", pero en vez de una puerta real, es una ruta en una página web.
+"/": Esta es la puerta que estamos usando. En este caso, es la puerta principal, la de la página de inicio.
+leerInventario: Esto es como un cartel que dice "¡Hola, Mundo!" cuando alguien toca esa puerta. Es lo que le dices a la persona que tocó la puerta (en este caso, cuando alguien visita la página de inicio).
+Así que cuando alguien entra a la página principal (la puerta "/"), el código le dirá "¡Hola desde controller!"
+
+- module.exports = router
+Un módulo es un archivo o conjunto de archivos que contiene funciones, objetos o variables que puedes compartir con otras partes de tu aplicación. 
+
+### Hola desde controllers
+Empezamos a poner codigos en un archivo llamado holaController.js que esta dentro de la carpeta controllers
+```
+exports.holaMundo = (req,res)=>{
+    console.log("hola desde el controlador")
+    res.send("Hola desde el controlador")
+}
+```
+Explicaremos cada linea:
+
+- exports.holaMundo =
+Aqui estamos exportando holaMundo
+
+- (req,res)=>{
+Aqui estamos diciendo que vamos a necesitar un requirimiento y una respuesta
+
+-console.log("hola desde el controlador")
+Aqui estamos diciendole que nos imprima hola desde el controlador
+
+- res.send("Hola desde el controlador")
+Aqui estamos dando una respuesta
+
+- }
+Cierro
+
+## Ahora hacemos lo mismo en un archivo llamado inventario.js en controllers
+
+```
+exports.leerInventario = (req, res) =>{
+    console.log("hola controller")
+    res.send("hola desde controller")
+}
+```
+Ahora explicamos cada linea
+
+-exports.leerInventario = (req, res) =>{
+Exportamos la variable leerInventario y le damos un requirimiento y una respuesta
+
+- console.log("hola controller")
+Requirimiento
+
+- res.send("hola desde controller")
+Respuesta
+
+- } 
+Cierre

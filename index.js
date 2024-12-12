@@ -1,6 +1,12 @@
 const express = require ("express");
+const mongoose = require ("mongoose")
+require("dotenv").config()
+//con esta linea puedo traer las variables de entorno, dotenv gestionar nuestra base de datos
+//permitimos que a traves de dotenv, index ingrese a los paquetes
+
 //traemos express a index.js 
 const holaRoutes =require("./routes/holaRoutes")
+const inventarioRoutes = require("./routes/inventario")
 
 const app = express()
 
@@ -12,6 +18,15 @@ app.set("port", PORT)
 
 app.use("/api/hola",holaRoutes)
 //cuando tu encuentres /api usame holaRoutes --> Direccionamiento a diferentes rutas
+
+mongoose.connect(process.env.MONGO_URI)
+//.then una promesa,function async
+.then(console.log("Conect to BD"))
+//Si sale error muestrame el error
+.catch(err=> console.error(err))
+//forma en la que traemos archivos
+
+app.use("/api/inventario", inventarioRoutes)
 
 //app.use("/api/herramientas/, herramientasRoutes")
 //app.use("/api/---",empleadosRoutes)
