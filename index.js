@@ -16,8 +16,14 @@ const PORT = 3006
 app.set("port", PORT)
 //El puerto que vamos a escuchar va a ser el 3006
 
+app.use(express.json())
+
 app.use("/api/hola",holaRoutes)
 //cuando tu encuentres /api usame holaRoutes --> Direccionamiento a diferentes rutas
+app.use("/api/inventario", inventarioRoutes)
+
+//app.use("/api/herramientas/, herramientasRoutes")
+//app.use("/api/---",empleadosRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
 //.then una promesa,function async
@@ -26,10 +32,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(err=> console.error(err))
 //forma en la que traemos archivos
 
-app.use("/api/inventario", inventarioRoutes)
 
-//app.use("/api/herramientas/, herramientasRoutes")
-//app.use("/api/---",empleadosRoutes)
 
 //app.get este tipo de codigo es anidado
 app.get("/", (req, res)=> {
