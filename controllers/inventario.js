@@ -21,7 +21,8 @@ exports.crear = async (req, res) =>{
         await Inventario.create({
             //Esto es lo que estoy creando desde models, esto es lo que asignamos
             nombre: req.body.nombre,
-            unidades: req.body.unidades
+            unidades: req.body.unidades,
+            fabricantes: req.body.fabricantes
             //(req -informacion que le envio al cliente)
         })
         res.status(201).send("Elemento creado")
@@ -41,6 +42,22 @@ exports.leerElementoPorId = async (req, res) =>{
         res.json(elemento).status(200)
     } catch (error) {
         console.log(error)
+        return res.status(500).send(error)
+    }
+}
+
+exports.modificarElementoPorId = async (req, res) =>{
+    try {
+        const {id}= req.params;
+        await Inventario.findByIdAndUpdate(id,{
+            nombre: req.body.nombre,
+            unidades: req.body.unidades,
+            fabricantes: req.body.fabricantes
+        })  
+        res.status(200).send("Herramienta modificado")
+    } catch (error) {
+        console.error(error)
+        //Le da mas informacion al codigo
         return res.status(500).send(error)
     }
 }

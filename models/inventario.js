@@ -21,6 +21,11 @@ const InventarioSchema = new Schema({
         //min--> Minimo
         default:0
         //Por defecto   
+    },
+    fabricantes:{
+        type: String,
+        required: true,
+        maxLength: 100
     }
     //atributos tipo string y numero
 }) 
