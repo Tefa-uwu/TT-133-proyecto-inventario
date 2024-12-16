@@ -61,3 +61,14 @@ exports.modificarElementoPorId = async (req, res) =>{
         return res.status(500).send(error)
     }
 }
+
+exports.eliminarElementoPorId = async (req, res) =>{
+    try {
+        const {id}= req.params
+        const elemento = await Inventario.findByIdAndDelete(id)
+        res.json(elemento).status(200)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send(error)
+    }
+}

@@ -1,5 +1,5 @@
 const express = require("express")
-const {leerInventario, crear, leerElementoPorId, modificarElementoPorId} =require("../controllers/inventario")
+const {leerInventario, crear, leerElementoPorId, modificarElementoPorId, eliminarElementoPorId} =require("../controllers/inventario")
 const router = express.Router()
 
 // router.get("/", (req,res)=>{
@@ -13,6 +13,7 @@ router.get("/:id",leerElementoPorId)
 //Estoy mandando un parametro por la url
 router.put("/:id", modificarElementoPorId)
 //put para actualizar 
+router.delete("/:id", eliminarElementoPorId)
 router.post("/", crear)
 //post verbo para crear
 
